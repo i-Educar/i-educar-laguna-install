@@ -1,6 +1,6 @@
 # Tutorial de instalação — i-Educar Laguna (PE-77/2026)
 
-Objetivo: ambiente homologável com core **2.12** + módulos das **Ondas 0 e 1** (e esqueletos da Onda 2).
+Objetivo: ambiente homologável com core **2.12** + módulos das **Ondas 0, 1 e 2** + i-Diário (opcional).
 
 ## 1. Pré-requisitos
 
@@ -28,7 +28,7 @@ chmod +x scripts/*.sh
 O que o `install.sh` faz:
 
 1. Clona `i-Educar/i-educar` (`2.12`) no destino  
-2. Executa `clone-modules.sh` (Buriti + pré-matrícula)  
+2. Executa `clone-modules.sh` (Ondas 0–2 + apps-api; use `--with-diario` para i-Diário)  
 3. Copia `.env.example` → `.env` se necessário  
 4. Sobe `postgres` + `redis`  
 5. Roda `check-ambiente.sh`  
@@ -85,7 +85,7 @@ Em instalação **já populada** (homolog): apenas confira contagens:
 ./scripts/check-ambiente.sh ~/ieducar-laguna
 ```
 
-## 4. Validar Onda 0 e Onda 1
+## 4. Validar Ondas 0, 1 e 2
 
 ```bash
 cd ~/ieducar-laguna
@@ -100,9 +100,27 @@ php artisan escolar:onda1-demo
 php packages/buriti/i-educar-transporte-escolar-v2/tests/run.php
 php packages/buriti/i-educar-educacenso-import-package/tests/run.php
 php packages/portabilis/pre-matricula-digital/docs/laguna/onda-1/run-tests.php
+
+# Onda 2 — trilhas A/B/C + apps-api
+for p in alimentacao-escolar almoxarifado-escolar servidor-educacional \
+  contratacoes-temporarias horario-automatico eventos-formacao \
+  atendimento-estudante biblioteca solicitacao-servicos; do
+  php packages/buriti/i-educar-$p-package/tests/run.php
+done
+php packages/buriti/i-educar-apps-api-package/tests/run.php
 ```
 
-Roteiro UI da 1ª rodada: no monorepo, `packages/buriti/docs/onda-1/ROTEIRO-TESTES-R1.md`.
+Roteiro UI R1: `packages/buriti/docs/onda-1/ROTEIRO-TESTES-R1.md`  
+Roadmap Android: `packages/buriti/i-educar-apps-api-package/docs/ROADMAP-ANDROID.md`
+
+## 4.1 i-Diário (conectado ao i-Educar)
+
+```bash
+./scripts/clone-modules.sh ~/ieducar-laguna --with-diario
+# ver packages/portabilis/i-diario/docs/laguna/INTEGRACAO-IEDUCAR.md
+```
+
+O i-Diário mantém banco próprio e sincroniza via API de integração com o core 2.12.
 
 ## 5. O que deve estar testável após instalar
 

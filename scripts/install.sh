@@ -16,7 +16,7 @@ else
   echo "OK  core já presente em $DEST"
 fi
 
-"$SCRIPT_DIR/clone-modules.sh" "$DEST" ${ALL_FLAG:+--all}
+"$SCRIPT_DIR/clone-modules.sh" "$DEST" ${ALL_FLAG:---with-diario}
 
 if [[ ! -f "$DEST/.env" && -f "$DEST/.env.example" ]]; then
   cp "$DEST/.env.example" "$DEST/.env"
