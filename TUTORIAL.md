@@ -1,6 +1,6 @@
 # Tutorial de instalação — i-Educar Laguna (PE-77/2026)
 
-Objetivo: ambiente homologável com core **2.12** + módulos das **Ondas 0, 1 e 2** + i-Diário (opcional).
+Objetivo: ambiente homologável com core **2.12** + módulos das **Ondas 0–3** + i-Diário (opcional).
 
 ## 1. Pré-requisitos
 
@@ -85,7 +85,7 @@ Em instalação **já populada** (homolog): apenas confira contagens:
 ./scripts/check-ambiente.sh ~/ieducar-laguna
 ```
 
-## 4. Validar Ondas 0, 1 e 2
+## 4. Validar Ondas 0–3
 
 ```bash
 cd ~/ieducar-laguna
@@ -108,6 +108,11 @@ for p in alimentacao-escolar almoxarifado-escolar servidor-educacional \
   php packages/buriti/i-educar-$p-package/tests/run.php
 done
 php packages/buriti/i-educar-apps-api-package/tests/run.php
+
+# Onda 3 — Sanctum / cobertura TR / OpenAPI (mesmo tests/run.php)
+# Handoff: packages/buriti/i-educar-apps-api-package/docs/onda-3/HANDOFF-5.13-5.14.md
+# Spec:     packages/buriti/i-educar-apps-api-package/docs/openapi-apps-v1.yaml
+# Provider: iEducar\Packages\BuritiAppsApi\Providers\AppsApiServiceProvider
 ```
 
 Roteiro UI R1: `packages/buriti/docs/onda-1/ROTEIRO-TESTES-R1.md`  
@@ -132,6 +137,7 @@ O i-Diário mantém banco próprio e sincroniza via API de integração com o co
 | 5.8 Fila | Processos abertos + consulta de protocolo |
 | 5.4 Transporte | Rota → viagem → gasto → carteirinha |
 | 5.10 Censo | Formatos 2025/2026 no import |
+| 5.13/5.14 Apps | `GET /api/apps/v1/catalogo` · login Sanctum · cobertura TR ≥85% |
 
 ## 6. Problemas comuns
 
@@ -143,6 +149,6 @@ O i-Diário mantém banco próprio e sincroniza via API de integração com o co
 | `composer plug-and-play` falha (security-advisories × PHP) | Use path + symlink + dump-autoload (como Onda 0) |
 | Permissão em `storage/` | Ajuste `HOST_UID`/`HOST_GID` no `.env` e rebuild |
 
-## 7. Próximos passos (Onda 2)
+## 7. Próximos passos (Onda 4)
 
-Após a 1ª rodada de testes, seguir `ORDEM-DESENVOLVIMENTO-LAGUNA.md` no monorepo: alimentação, RH/ACT, horário, eventos, etc.
+Onda 3 entregue (apps-api). Seguir `ORDEM-DESENVOLVIMENTO-LAGUNA.md` Onda 4: persistência chamada/notas via i-Diário, UI/migrations P0 e ensaio PoC.

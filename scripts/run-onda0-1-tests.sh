@@ -29,4 +29,4 @@ if command -v php >/dev/null && [[ -f artisan ]]; then
 fi
 
 echo
-echo "Smoke Onda 0–2 concluído."
+echo "Smoke Onda 0–3 concluído (apps-api inclui gate Onda 3)."
