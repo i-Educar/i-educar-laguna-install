@@ -151,16 +151,16 @@ O i-Diário mantém banco próprio e sincroniza via API de integração com o co
 
 ## 6.1 Validar Onda 4 (PoC)
 
-
+```bash
+php artisan alimentacao:demo
+php artisan transporte:passagem-empenho-demo
+php artisan exportacao:demo-criticos
+php packages/buriti/i-educar-apps-api-package/tests/run.php
+# UI: /alimentacao-escolar/cardapio
+# UI: /transporte-escolar/gastos/passagens-empenhos
+# Docs: packages/buriti/docs/onda-4/
+```
 
 ## 7. Próximos passos (pós-PoC / plano 15%)
 
-
-Onda 3 entregue (apps-api). Seguir `ORDEM-DESENVOLVIMENTO-LAGUNA.md` Onda 4: persistência chamada/notas via i-Diário, UI/migrations P0 e ensaio PoC.
-
-
-## Validar Onda 4
-
-
-
-Docs: monorepo .
+Onda 4 MVP entregue. Seguir `packages/buriti/docs/onda-4/PLANO-15.md` para gaps de 30 dias (gravação i-Diário, estoque PNAE, UIs restantes).
