@@ -149,6 +149,18 @@ O i-Diário mantém banco próprio e sincroniza via API de integração com o co
 | `composer plug-and-play` falha (security-advisories × PHP) | Use path + symlink + dump-autoload (como Onda 0) |
 | Permissão em `storage/` | Ajuste `HOST_UID`/`HOST_GID` no `.env` e rebuild |
 
-## 7. Próximos passos (Onda 4)
+## 6.1 Validar Onda 4 (PoC)
+
+
+
+## 7. Próximos passos (pós-PoC / plano 15%)
+
 
 Onda 3 entregue (apps-api). Seguir `ORDEM-DESENVOLVIMENTO-LAGUNA.md` Onda 4: persistência chamada/notas via i-Diário, UI/migrations P0 e ensaio PoC.
+
+
+## Validar Onda 4
+
+
+
+Docs: monorepo .
