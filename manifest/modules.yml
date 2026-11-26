@@ -1,46 +1,101 @@
-# Cópia operacional do manifesto Laguna (mantenha alinhado a i-educar-laguna-core)
+# Manifesto operacional Laguna (PE-77/2026) — alinhado a i-educar-laguna-core + REPOS-IEDUCAR-ORG
 core:
   repo: git@github.com:i-Educar/i-educar.git
+  repo_https: https://github.com/i-Educar/i-educar.git
   branch: "2.12"
 
-# required_for_poc / onda 0-1 — clonados por padrão
-modules_onda_0_1:
-  - name: i-educar-exportacao-unificada-package
-    git: git@github.com:i-Educar/i-educar-exportacao-unificada-package.git
+# Pacotes Buriti / Portabilis exigidos na PoC (clone padrão = todos)
+modules:
+  - name: buriti/i-educar-exportacao-unificada-package
+    git: i-Educar/i-educar-exportacao-unificada-package
     path: packages/buriti/i-educar-exportacao-unificada-package
-  - name: i-educar-escolar-aderencia-package
-    git: git@github.com:i-Educar/i-educar-escolar-aderencia-package.git
+    onda: 0
+  - name: buriti/i-educar-escolar-aderencia-package
+    git: i-Educar/i-educar-escolar-aderencia-package
     path: packages/buriti/i-educar-escolar-aderencia-package
-  - name: i-educar-transporte-escolar-v2
-    git: git@github.com:i-Educar/i-educar-transporte-escolar-v2-package.git
+    onda: 1
+  - name: buriti/i-educar-transporte-escolar-v2
+    git: i-Educar/i-educar-transporte-escolar-v2-package
     path: packages/buriti/i-educar-transporte-escolar-v2
-  - name: pre-matricula-digital
-    git: git@github.com:portabilis/pre-matricula-digital.git
+    onda: 1
+  - name: portabilis/pre-matricula-digital
+    git: i-Educar/pre-matricula-digital
     path: packages/portabilis/pre-matricula-digital
-    note: Preferir fork Serventec/JaderGabriel se houver evoluções Laguna
-  - name: i-educar-educacenso-import-package
-    git: git@github.com:JaderGabriel/i-educar-educacenso-import-package.git
+    fallback_git: portabilis/pre-matricula-digital
+    onda: 1
+  - name: buriti/i-educar-educacenso-import-package
+    git: i-Educar/i-educar-educacenso-import-package
     path: packages/buriti/i-educar-educacenso-import-package
-
-# onda 2+ — esqueletos (clone com --all)
-modules_onda_2_plus:
-  - git: git@github.com:i-Educar/i-educar-servidor-educacional-package.git
-    path: packages/buriti/i-educar-servidor-educacional-package
-  - git: git@github.com:i-Educar/i-educar-alimentacao-escolar-package.git
+    fallback_git: JaderGabriel/i-educar-educacenso-import-package
+    onda: 1
+  - name: buriti/i-educar-alimentacao-escolar-package
+    git: i-Educar/i-educar-alimentacao-escolar-package
     path: packages/buriti/i-educar-alimentacao-escolar-package
-  - git: git@github.com:i-Educar/i-educar-contratacoes-temporarias-package.git
-    path: packages/buriti/i-educar-contratacoes-temporarias-package
-  - git: git@github.com:i-Educar/i-educar-horario-automatico-package.git
-    path: packages/buriti/i-educar-horario-automatico-package
-  - git: git@github.com:i-Educar/i-educar-eventos-formacao-package.git
-    path: packages/buriti/i-educar-eventos-formacao-package
-  - git: git@github.com:i-Educar/i-educar-almoxarifado-escolar-package.git
+    onda: 2
+  - name: buriti/i-educar-almoxarifado-escolar-package
+    git: i-Educar/i-educar-almoxarifado-escolar-package
     path: packages/buriti/i-educar-almoxarifado-escolar-package
-  - git: git@github.com:i-Educar/i-educar-atendimento-estudante-package.git
+    onda: 2
+  - name: buriti/i-educar-servidor-educacional-package
+    git: i-Educar/i-educar-servidor-educacional-package
+    path: packages/buriti/i-educar-servidor-educacional-package
+    onda: 2
+  - name: buriti/i-educar-contratacoes-temporarias-package
+    git: i-Educar/i-educar-contratacoes-temporarias-package
+    path: packages/buriti/i-educar-contratacoes-temporarias-package
+    onda: 2
+  - name: buriti/i-educar-horario-automatico-package
+    git: i-Educar/i-educar-horario-automatico-package
+    path: packages/buriti/i-educar-horario-automatico-package
+    onda: 2
+  - name: buriti/i-educar-eventos-formacao-package
+    git: i-Educar/i-educar-eventos-formacao-package
+    path: packages/buriti/i-educar-eventos-formacao-package
+    onda: 2
+  - name: buriti/i-educar-atendimento-estudante-package
+    git: i-Educar/i-educar-atendimento-estudante-package
     path: packages/buriti/i-educar-atendimento-estudante-package
-  - git: git@github.com:i-Educar/i-educar-biblioteca-package.git
+    onda: 2
+  - name: buriti/i-educar-biblioteca-package
+    git: i-Educar/i-educar-biblioteca-package
     path: packages/buriti/i-educar-biblioteca-package
-  - git: git@github.com:i-Educar/i-educar-solicitacao-servicos-package.git
+    onda: 2
+  - name: buriti/i-educar-solicitacao-servicos-package
+    git: i-Educar/i-educar-solicitacao-servicos-package
     path: packages/buriti/i-educar-solicitacao-servicos-package
-  - git: git@github.com:i-Educar/i-educar-apps-api-package.git
+    onda: 2
+  - name: buriti/i-educar-apps-api-package
+    git: i-Educar/i-educar-apps-api-package
     path: packages/buriti/i-educar-apps-api-package
+    onda: 3
+  - name: buriti/i-educar-busca-ativa-package
+    git: i-Educar/i-educar-busca-ativa-package
+    path: packages/buriti/i-educar-busca-ativa-package
+    onda: 2
+  - name: buriti/i-educar-rh-educacional-package
+    git: i-Educar/i-educar-rh-educacional-package
+    path: packages/buriti/i-educar-rh-educacional-package
+    onda: 2
+  - name: buriti/i-educar-laguna-ambiente-package
+    git: i-Educar/i-educar-laguna-ambiente-package
+    path: packages/buriti/i-educar-laguna-ambiente-package
+    onda: infra
+  - name: buriti/i-educar-setup-package
+    git: i-Educar/i-educar-setup-package
+    path: packages/buriti/i-educar-setup-package
+    onda: infra
+  - name: buriti/i-educar-setup-municipio-base-package
+    git: i-Educar/i-educar-setup-municipio-base-package
+    path: packages/buriti/i-educar-setup-municipio-base-package
+    onda: infra
+  - name: buriti/i-educar-assinatura-digital-package
+    git: i-Educar/i-educar-assinatura-digital-package
+    path: packages/buriti/i-educar-assinatura-digital-package
+    onda: opcional
+    optional: true
+
+# Opcional — clone com --with-diario
+diario:
+  git: i-Educar/i-diario
+  path: packages/portabilis/i-diario
+  branch: "1.6"

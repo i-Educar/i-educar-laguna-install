@@ -1,66 +1,81 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib-common.sh
+source "$SCRIPT_DIR/lib-common.sh"
+
 TARGET="${1:-}"
-MODE="${2:-}"  # --all | --with-diario | --all --with-diario
+shift || true
 
 if [[ -z "$TARGET" || ! -d "$TARGET" ]]; then
-  echo "Uso: $0 /caminho/para/i-educar [--all] [--with-diario]"
+  echo "Uso: $0 /caminho/para/i-educar [--with-diario] [--skip-optional]"
+  echo "Env: LAGUNA_GIT_PROTOCOL=ssh|https (padrão: ssh)"
   exit 1
 fi
 
-clone_one() {
-  local git_url="$1"
-  local dest="$2"
-  local branch="${3:-}"
-  if [[ -d "$dest/.git" ]]; then
-    echo "OK  já existe: $dest"
-    git -C "$dest" fetch --quiet || true
-    return
-  fi
-  mkdir -p "$(dirname "$dest")"
-  echo ">> clonando $git_url → $dest"
-  if [[ -n "$branch" ]]; then
-    git clone --depth 1 -b "$branch" "$git_url" "$dest"
-  else
-    git clone --depth 1 "$git_url" "$dest"
+WITH_DIARIO=0
+SKIP_OPTIONAL=0
+for arg in "$@"; do
+  case "$arg" in
+    --with-diario|--all) WITH_DIARIO=1 ;;
+    --skip-optional) SKIP_OPTIONAL=1 ;;
+  esac
+done
+
+fail=0
+
+clone_pair() {
+  local slug="$1" path="$2" fallback="${3:-}"
+  if ! laguna_clone_one "$slug" "$TARGET/$path" "" "$fallback"; then
+    fail=$((fail + 1))
   fi
 }
 
-echo "=== Módulos Onda 0–1 ==="
-clone_one git@github.com:i-Educar/i-educar-exportacao-unificada-package.git \
-  "$TARGET/packages/buriti/i-educar-exportacao-unificada-package"
-clone_one git@github.com:i-Educar/i-educar-escolar-aderencia-package.git \
-  "$TARGET/packages/buriti/i-educar-escolar-aderencia-package"
-clone_one git@github.com:i-Educar/i-educar-transporte-escolar-v2-package.git \
-  "$TARGET/packages/buriti/i-educar-transporte-escolar-v2"
-clone_one git@github.com:portabilis/pre-matricula-digital.git \
-  "$TARGET/packages/portabilis/pre-matricula-digital"
-clone_one git@github.com:JaderGabriel/i-educar-educacenso-import-package.git \
-  "$TARGET/packages/buriti/i-educar-educacenso-import-package"
+echo "=== Módulos Laguna (todas as ondas + infra) ==="
+echo "Destino: $TARGET · protocolo: ${LAGUNA_GIT_PROTOCOL:-ssh}"
 
-echo "=== Módulos Onda 2 (motores) ==="
-for pair in \
-  "i-Educar/i-educar-alimentacao-escolar-package.git|packages/buriti/i-educar-alimentacao-escolar-package" \
-  "i-Educar/i-educar-almoxarifado-escolar-package.git|packages/buriti/i-educar-almoxarifado-escolar-package" \
-  "i-Educar/i-educar-servidor-educacional-package.git|packages/buriti/i-educar-servidor-educacional-package" \
-  "i-Educar/i-educar-contratacoes-temporarias-package.git|packages/buriti/i-educar-contratacoes-temporarias-package" \
-  "i-Educar/i-educar-horario-automatico-package.git|packages/buriti/i-educar-horario-automatico-package" \
-  "i-Educar/i-educar-eventos-formacao-package.git|packages/buriti/i-educar-eventos-formacao-package" \
-  "i-Educar/i-educar-atendimento-estudante-package.git|packages/buriti/i-educar-atendimento-estudante-package" \
-  "i-Educar/i-educar-biblioteca-package.git|packages/buriti/i-educar-biblioteca-package" \
-  "i-Educar/i-educar-solicitacao-servicos-package.git|packages/buriti/i-educar-solicitacao-servicos-package" \
-  "i-Educar/i-educar-apps-api-package.git|packages/buriti/i-educar-apps-api-package"
-do
-  git_path="${pair%%|*}"
-  rel="${pair##*|}"
-  clone_one "git@github.com:${git_path}" "$TARGET/$rel"
-done
+# Onda 0–1
+clone_pair i-Educar/i-educar-exportacao-unificada-package packages/buriti/i-educar-exportacao-unificada-package
+clone_pair i-Educar/i-educar-escolar-aderencia-package packages/buriti/i-educar-escolar-aderencia-package
+clone_pair i-Educar/i-educar-transporte-escolar-v2-package packages/buriti/i-educar-transporte-escolar-v2
+clone_pair i-Educar/pre-matricula-digital packages/portabilis/pre-matricula-digital portabilis/pre-matricula-digital
+clone_pair i-Educar/i-educar-educacenso-import-package packages/buriti/i-educar-educacenso-import-package JaderGabriel/i-educar-educacenso-import-package
 
-if [[ "$*" == *"--with-diario"* ]] || [[ "$MODE" == "--all" ]]; then
-  echo "=== i-Diário ==="
-  clone_one git@github.com:i-Educar/i-diario.git \
-    "$TARGET/packages/portabilis/i-diario" "1.6"
+# Onda 2
+clone_pair i-Educar/i-educar-alimentacao-escolar-package packages/buriti/i-educar-alimentacao-escolar-package
+clone_pair i-Educar/i-educar-almoxarifado-escolar-package packages/buriti/i-educar-almoxarifado-escolar-package
+clone_pair i-Educar/i-educar-servidor-educacional-package packages/buriti/i-educar-servidor-educacional-package
+clone_pair i-Educar/i-educar-contratacoes-temporarias-package packages/buriti/i-educar-contratacoes-temporarias-package
+clone_pair i-Educar/i-educar-horario-automatico-package packages/buriti/i-educar-horario-automatico-package
+clone_pair i-Educar/i-educar-eventos-formacao-package packages/buriti/i-educar-eventos-formacao-package
+clone_pair i-Educar/i-educar-atendimento-estudante-package packages/buriti/i-educar-atendimento-estudante-package
+clone_pair i-Educar/i-educar-biblioteca-package packages/buriti/i-educar-biblioteca-package
+clone_pair i-Educar/i-educar-solicitacao-servicos-package packages/buriti/i-educar-solicitacao-servicos-package
+clone_pair i-Educar/i-educar-busca-ativa-package packages/buriti/i-educar-busca-ativa-package
+clone_pair i-Educar/i-educar-rh-educacional-package packages/buriti/i-educar-rh-educacional-package
+
+# Onda 3
+clone_pair i-Educar/i-educar-apps-api-package packages/buriti/i-educar-apps-api-package
+
+# Infra Laguna (obrigatório para laguna:setup / check / ensaiar)
+clone_pair i-Educar/i-educar-laguna-ambiente-package packages/buriti/i-educar-laguna-ambiente-package
+clone_pair i-Educar/i-educar-setup-package packages/buriti/i-educar-setup-package
+clone_pair i-Educar/i-educar-setup-municipio-base-package packages/buriti/i-educar-setup-municipio-base-package
+
+if [[ "$SKIP_OPTIONAL" -eq 0 ]]; then
+  echo "=== Opcionais ==="
+  clone_pair i-Educar/i-educar-assinatura-digital-package packages/buriti/i-educar-assinatura-digital-package || true
 fi
 
+if [[ "$WITH_DIARIO" -eq 1 ]]; then
+  echo "=== i-Diário ==="
+  laguna_clone_one i-Educar/i-diario "$TARGET/packages/portabilis/i-diario" "1.6" || fail=$((fail + 1))
+fi
+
+echo
+if [[ "$fail" -gt 0 ]]; then
+  echo "Clone concluído com $fail falha(s)."
+  exit 1
+fi
 echo "Clone de módulos concluído."

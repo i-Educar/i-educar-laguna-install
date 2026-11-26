@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="${1:-.}"
+ROOT="$(cd "$ROOT" && pwd)"
 cd "$ROOT"
 
 ok=0
@@ -25,9 +26,9 @@ for ext in pdo_pgsql pgsql gd zip xml mbstring; do
 done
 
 [[ -f .env ]] && say OK ".env presente" || say FAIL ".env ausente"
+[[ -f artisan ]] && say OK "artisan" || say FAIL "artisan"
 
 if [[ -f .env ]]; then
-  # shellcheck disable=SC1091
   set +u
   DB_HOST=$(grep -E '^DB_HOST=' .env | cut -d= -f2- | tr -d '"' | tr -d "'")
   DB_PORT=$(grep -E '^DB_PORT=' .env | cut -d= -f2- | tr -d '"' | tr -d "'")
@@ -61,14 +62,27 @@ if [[ -f .env ]]; then
   fi
 fi
 
-for p in \
-  packages/buriti/i-educar-exportacao-unificada-package \
-  packages/buriti/i-educar-escolar-aderencia-package \
-  packages/buriti/i-educar-transporte-escolar-v2 \
+REQUIRED=(
+  packages/buriti/i-educar-exportacao-unificada-package
+  packages/buriti/i-educar-escolar-aderencia-package
+  packages/buriti/i-educar-transporte-escolar-v2
   packages/portabilis/pre-matricula-digital
- do
-  [[ -d "$p" ]] && say OK "módulo $p" || say WARN "faltando $p"
+  packages/buriti/i-educar-apps-api-package
+  packages/buriti/i-educar-laguna-ambiente-package
+  packages/buriti/i-educar-setup-package
+  packages/buriti/i-educar-contratacoes-temporarias-package
+  packages/buriti/i-educar-busca-ativa-package
+)
+
+for p in "${REQUIRED[@]}"; do
+  [[ -d "$p" ]] && say OK "módulo $p" || say FAIL "faltando $p"
 done
+
+if [[ -f artisan ]] && php artisan list --raw 2>/dev/null | grep -q '^laguna:check'; then
+  say OK "comando laguna:check registrado"
+else
+  say WARN "laguna:check ausente (composer dump-autoload / package discover)"
+fi
 
 echo
 echo "Resumo: $ok ok, $warn avisos, $fail falhas"
